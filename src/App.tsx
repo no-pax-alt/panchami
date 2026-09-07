@@ -1,34 +1,30 @@
-import Navbar from './components/Navbar';
-import Hero from './components/Hero';
-import About from './components/About';
-import Skills from './components/Skills';
-import Projects from './components/Projects';
-import Certifications from './components/Certifications';
-import Education from './components/Education';
-import Dashboard from './components/Dashboard';
-import Contact from './components/Contact';
-import Footer from './components/Footer';
+import { useState } from 'react';
+import { motion } from 'framer-motion';
+import { ArrowDownRight, ArrowUpRight, Check, Copy, ExternalLink, Github, Linkedin, Mail, MapPin, Phone } from 'lucide-react';
+
+const projects = [
+  { number: '01', title: 'ThynkByte', type: 'Mobile application', description: 'A mobile-first solution designed to address specific software utility requirements. Full project assets and details will be updated here.', tone: 'project-ink' },
+  { number: '02', title: 'LumiSense', type: 'Smart hardware', description: 'A smart hardware project that integrates responsive controls with environment sensors. Source code and assembly guides will be posted below.', tone: 'project-coral' },
+  { number: '03', title: '2D Graphics Editor', type: 'Desktop / web utility', description: 'A desktop/web-based utility engineered to display vector coordinates, edit simple canvas shapes, and export visual elements.', tone: 'project-lilac' },
+];
+const languages = [['Python', 'Used heavily for data structures, algorithm problem solving, and starting machine learning scripts.'], ['C Programming', 'Strengthening coding fundamentals, direct memory management concepts, and low-level architecture study.'], ['Ruby', 'Exploring object-oriented scripting paradigms, backend conventions, and clean syntax principles.']];
+const interests = [['Programming', 'Building clean, logic-driven scripts and solving computational challenges.'], ['AI & Data Science', 'Exploring statistical models, data analysis patterns, and neural network foundations.'], ['Application Development', 'Learning front-end layout structures, state management, and user interfaces.'], ['Creative Technology', 'Integrating hardware, software, and physical components to build responsive items.']];
+const fadeUp = { initial: { opacity: 0, y: 24 }, whileInView: { opacity: 1, y: 0 }, viewport: { once: true, amount: 0.18 }, transition: { duration: 0.65, ease: 'easeOut' as const } };
+function SectionLabel({ index, children }: { index: string; children: string }) { return <div className="section-label"><span>{index}</span><span>{children}</span></div>; }
 
 export default function App() {
-  return (
-    <div className="relative min-h-screen bg-[#fcf9f5] text-zinc-800 antialiased font-sans flex flex-col justify-between selection:bg-[#f5ebe6] selection:text-zinc-900">
-      {/* Navigation menu */}
-      <Navbar />
-      
-      {/* Main page content sections */}
-      <main className="flex-1">
-        <Hero />
-        <About />
-        <Skills />
-        <Projects />
-        <Certifications />
-        <Education />
-        <Dashboard />
-        <Contact />
-      </main>
-      
-      {/* Footer navigation and copyright */}
-      <Footer />
-    </div>
-  );
+  const [copied, setCopied] = useState<string | null>(null); const [sent, setSent] = useState(false);
+  const copy = (value: string, label: string) => { navigator.clipboard?.writeText(value); setCopied(label); window.setTimeout(() => setCopied(null), 1800); };
+  const submit = (event: React.FormEvent<HTMLFormElement>) => { event.preventDefault(); setSent(true); event.currentTarget.reset(); window.setTimeout(() => setSent(false), 5000); };
+  return <div className="site-shell" id="home">
+    <header className="site-nav"><a className="wordmark" href="#home" aria-label="Panchami V C home">P / V C</a><nav aria-label="Main navigation"><a href="#about">About</a><a href="#work">Work</a><a href="#contact">Contact</a></nav><a className="nav-status" href="mailto:vcpanchami@gmail.com"><span className="status-dot" /> Available for opportunities</a></header>
+    <main>
+      <section className="hero section-pad" aria-labelledby="hero-title"><div className="hero-meta"><span>Portfolio / 2026</span><span>Bangalore, India</span></div><motion.div {...fadeUp} className="hero-copy"><p className="eyebrow">Computer science · AI & Data Science</p><h1 id="hero-title">Panchami<br /><em>V C</em></h1><div className="hero-bottom"><p>I'm a Computer Science Engineering student specializing in Artificial Intelligence & Data Science, passionate about technology, programming, and building creative digital solutions.</p><a className="circle-link" href="#work" aria-label="Scroll to selected work"><ArrowDownRight /></a></div></motion.div><div className="hero-aside"><span className="aside-line" /><span>01 — 08</span><span className="aside-copy">A quiet space for<br />curiosity and making.</span></div></section>
+      <section id="about" className="section-pad editorial-section"><SectionLabel index="01">About me</SectionLabel><motion.div {...fadeUp} className="about-grid"><div><h2>Curious learner<br />& aspiring <em>engineer.</em></h2></div><div className="about-text"><p>As a Computer Science Engineering student specializing in Artificial Intelligence and Data Science at REVA University, I am driven by an intense curiosity about how modern data-driven systems shape our world. My academic journey focuses on understanding computational theories and applying programming frameworks to solve real-world problems.</p><p>I believe in the power of continuous learning and hands-on experimentation. Whether it is coding in Python, studying cybersecurity concepts, or exploring hardware and smart technologies, I approach learning with discipline and enthusiasm. I seek to build an engineering foundation that prepares me for impact-focused technology internships and future professional endeavors.</p><div className="profile-facts"><span><b>Name</b>Panchami V C</span><span><b>Age</b>19 Years Old</span><span><b>Education</b>B.Tech CSE — AI & Data Science</span><span><b>University</b>REVA University</span></div></div></motion.div></section>
+      <section id="work" className="section-pad work-section"><SectionLabel index="02">Selected work</SectionLabel><div className="work-intro"><h2>Projects in<br /><em>progress.</em></h2><p>Academic and creative development projects displaying practical software, systems, and engineering fundamentals.</p></div><div className="project-list">{projects.map((project, index) => <motion.a {...fadeUp} transition={{ ...fadeUp.transition, delay: index * 0.08 }} className={`project-row ${project.tone}`} href="#contact" key={project.title}><span className="project-number">{project.number}</span><div className="project-title"><span>{project.type}</span><h3>{project.title}</h3></div><p>{project.description}</p><ArrowUpRight className="project-arrow" /></motion.a>)}</div></section>
+      <section id="skills" className="section-pad editorial-section"><SectionLabel index="03">Skills & interests</SectionLabel><div className="skills-grid"><motion.div {...fadeUp}><h2>Always<br /><em>learning.</em></h2><p className="section-lede">An overview of the programming languages I am actively learning and the technology areas I enjoy exploring.</p><div className="language-list">{languages.map(([name, description], index) => <div className="language-row" key={name}><span>0{index + 1}</span><div><h3>{name}</h3><p>{description}</p></div><small>Currently studying</small></div>)}</div></motion.div><motion.div {...fadeUp} className="interest-list"><p className="micro-label">Academic areas of interest</p>{interests.map(([name, description]) => <div className="interest-row" key={name}><h3>{name}</h3><p>{description}</p></div>)}</motion.div></div></section>
+      <section id="stats" className="section-pad editorial-section"><SectionLabel index="04">Personal statistics</SectionLabel><div className="stats-grid"><div><h2>Small<br /><em>signals.</em></h2><p className="section-lede">A metric overview summarizing my academic credentials, current languages, and engineering project files.</p></div><div className="stat-list"><div><strong>01</strong><span>Certification</span><small>Deloitte Cyber Security</small></div><div><strong>03</strong><span>Programming languages</span><small>Python, C, Ruby studies</small></div><div><strong>03</strong><span>Featured projects</span><small>Application & Smart Tech</small></div><div><strong>01</strong><span>Degree in progress</span><small>B.Tech CSE (AI & DS)</small></div></div></div><p className="stats-note">* Values according to currently verified source repository data.</p></section>\n      <section id="credentials" className="section-pad dark-section"><SectionLabel index="04">Credentials & education</SectionLabel><div className="credential-grid"><div><h2>Grounded in<br /><em>the fundamentals.</em></h2><p>Academic metrics and graduation details will be updated as coursework progresses.</p></div><div className="credential-stack"><article><span className="micro-label">Degree in progress</span><h3>REVA University</h3><p>B.Tech — Computer Science Engineering (Artificial Intelligence & Data Science)</p><small><MapPin size={14} /> Bangalore, Karnataka, India</small><small>Academic Status: Enrolled as a full-time engineering undergraduate.</small></article><article><span className="micro-label">Verified credential</span><h3>Deloitte — Cyber Security Certificate</h3><p>Focus Area: Cyber Security Core Principles</p><small>Credential Type: Professional Certificate</small><small className="muted">Credential ID and URLs are omitted in accordance with security disclosure settings.</small></article></div></div></section>
+      <section id="contact" className="section-pad contact-section"><SectionLabel index="05">Contact</SectionLabel><div className="contact-grid"><div><h2>Let's make<br /><em>something useful.</em></h2><p>Get in touch for placements, academic collaboration, or smart technology project discussions.</p><div className="contact-links"><button onClick={() => copy('+91 96636 82772', 'phone')}><Phone size={16} /> +91 96636 82772 <span>{copied === 'phone' ? <Check size={14} /> : <Copy size={14} />}</span></button><button onClick={() => copy('vcpanchami@gmail.com', 'email')}><Mail size={16} /> vcpanchami@gmail.com <span>{copied === 'email' ? <Check size={14} /> : <Copy size={14} />}</span></button><span><MapPin size={16} /> Bangalore, India</span></div><div className="social-links"><a href="https://github.com/no-pax-alt" target="_blank" rel="noreferrer"><Github size={17} /> GitHub <ExternalLink size={13} /></a><a href="https://www.linkedin.com" target="_blank" rel="noreferrer"><Linkedin size={17} /> LinkedIn <ExternalLink size={13} /></a></div></div><form onSubmit={submit} className="contact-form"><p className="micro-label">Send a message</p>{sent ? <div className="success"><Check size={22} /><h3>Message Sent Successfully!</h3><p>Thank you. The mock form demo submission has been captured.</p></div> : <><label>Name<input required name="name" /></label><label>Email<input required type="email" name="email" /></label><label>Message<textarea required name="message" rows={4} /></label><button type="submit" className="submit-button">Send message <ArrowUpRight size={17} /></button></>}</form></div></section>
+    </main><footer className="site-footer"><span>© 2026 Panchami V C. Built with React.js.</span><a href="#home">Back to top ↑</a></footer>
+  </div>;
 }
