@@ -11,3 +11,7 @@ Hi, I’m Panchami V C, a B.Tech Computer Science student specializing in Artifi
 ## Smart Automated Table Lamp
 
 Smart Automated Table Lamp is an IoT-based project built using NodeMCU to automate the control of a table lamp based on the surrounding environment. The system uses sensors to detect ambient light and automatically switches the lamp on or off when needed, helping improve convenience and reduce unnecessary power consumption. This project demonstrates the practical use of NodeMCU, sensors, automation, and IoT concepts to build a simple smart home solution.
+
+## Certifications
+
+I have completed certifications in areas including Python for Data Science, Data Analysis, and Data Visualization through IBM. These certifications helped me strengthen my understanding of Python, data handling, analysis techniques, and visualization while giving me practical exposure to working with data-driven concepts.
