@@ -1,39 +1,58 @@
 import React, { useState, useEffect } from 'react';
-import { Menu, X } from 'lucide-react';
+import { AnimatePresence, motion } from 'framer-motion';
+import { ArrowUp, Menu, X } from 'lucide-react';
+
+const navItems = [
+  { label: 'Home', id: 'home' },
+  { label: 'About', id: 'about' },
+  { label: 'Skills', id: 'skills' },
+  { label: 'Projects', id: 'projects' },
+  { label: 'Certifications', id: 'certifications' },
+  { label: 'Education', id: 'education' },
+  { label: 'Contact', id: 'contact' },
+];
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [activeSection, setActiveSection] = useState('home');
-
-  const navItems = [
-    { label: 'Home', id: 'home' },
-    { label: 'About', id: 'about' },
-    { label: 'Skills', id: 'skills' },
-    { label: 'Projects', id: 'projects' },
-    { label: 'Certifications', id: 'certifications' },
-    { label: 'Education', id: 'education' },
-    { label: 'Contact', id: 'contact' },
-  ];
+  const [scrollProgress, setScrollProgress] = useState(0);
+  const [showScrollTop, setShowScrollTop] = useState(false);
 
   // Track active section on scroll
   useEffect(() => {
+    let frame = 0;
     const handleScroll = () => {
-      const scrollPosition = window.scrollY + 100;
+      if (frame) return;
 
-      for (const item of navItems) {
-        const element = document.getElementById(item.id);
-        if (element) {
-          const top = element.offsetTop;
-          const height = element.offsetHeight;
-          if (scrollPosition >= top && scrollPosition < top + height) {
-            setActiveSection(item.id);
+      frame = window.requestAnimationFrame(() => {
+        const scrollPosition = window.scrollY + 100;
+        const scrollableHeight = document.documentElement.scrollHeight - window.innerHeight;
+        const progress = scrollableHeight > 0 ? window.scrollY / scrollableHeight : 0;
+
+        setScrollProgress(Math.min(1, Math.max(0, progress)));
+        setShowScrollTop(window.scrollY > 360);
+
+        for (const item of navItems) {
+          const element = document.getElementById(item.id);
+          if (element) {
+            const top = element.offsetTop;
+            const height = element.offsetHeight;
+            if (scrollPosition >= top && scrollPosition < top + height) {
+              setActiveSection(item.id);
+            }
           }
         }
-      }
+
+        frame = 0;
+      });
     };
 
+    handleScroll();
     window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      window.cancelAnimationFrame(frame);
+    };
   }, []);
 
   const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, id: string) => {
@@ -57,8 +76,20 @@ export default function Navbar() {
     }
   };
 
+  const handleScrollTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    window.history.pushState(null, '', '#home');
+  };
+
   return (
     <nav className="sticky top-0 z-50 w-full border-b border-zinc-200/60 bg-white/80 backdrop-blur-md">
+      <motion.div
+        className="absolute inset-x-0 bottom-0 h-0.5 origin-left bg-brand"
+        initial={{ scaleX: 0 }}
+        animate={{ scaleX: scrollProgress }}
+        transition={{ duration: 0.18, ease: 'easeOut' }}
+        aria-hidden="true"
+      />
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between">
           {/* Logo/Brand */}
@@ -100,8 +131,9 @@ export default function Navbar() {
               className="inline-flex items-center justify-center rounded-md p-2 text-zinc-500 hover:bg-zinc-100 hover:text-zinc-900 focus:outline-hidden focus:ring-2 focus:ring-brand focus:ring-offset-2"
               aria-controls="mobile-menu"
               aria-expanded={isOpen}
+              aria-label={isOpen ? 'Close main menu' : 'Open main menu'}
             >
-              <span className="sr-only">Open main menu</span>
+              <span className="sr-only">{isOpen ? 'Close main menu' : 'Open main menu'}</span>
               {isOpen ? (
                 <X className="h-6 w-6" aria-hidden="true" />
               ) : (
@@ -136,6 +168,32 @@ export default function Navbar() {
           ))}
         </div>
       </div>
+
+      <AnimatePresence>
+        {showScrollTop && (
+          <motion.button
+            type="button"
+            onClick={handleScrollTop}
+            initial={{ opacity: 0, scale: 0.7, y: 12 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.7, y: 12 }}
+            transition={{ duration: 0.2, ease: 'easeOut' }}
+            className="fixed bottom-6 right-5 z-40 flex h-11 w-11 items-center justify-center rounded-full border border-brand/20 bg-white text-brand shadow-lg shadow-brand/10 transition-colors hover:bg-brand hover:text-white focus:outline-hidden focus:ring-2 focus:ring-brand focus:ring-offset-2"
+            aria-label="Scroll back to top"
+          >
+            <span
+              className="absolute inset-0 rounded-full"
+              style={{
+                background: `conic-gradient(var(--color-brand) ${scrollProgress * 360}deg, transparent 0deg)`,
+                mask: 'radial-gradient(farthest-side, transparent calc(100% - 2px), #000 0)',
+                WebkitMask: 'radial-gradient(farthest-side, transparent calc(100% - 2px), #000 0)',
+              }}
+              aria-hidden="true"
+            />
+            <ArrowUp className="relative h-4 w-4" aria-hidden="true" />
+          </motion.button>
+        )}
+      </AnimatePresence>
     </nav>
   );
 }

@@ -10,17 +10,20 @@ export default function Contact() {
   const emailVal = 'vcpanchami@gmail.com';
 
   const handleCopy = (text: string, label: string) => {
-    navigator.clipboard.writeText(text);
-    setCopiedText(label);
-    setTimeout(() => setCopiedText(null), 2000);
+    void navigator.clipboard.writeText(text)
+      .then(() => {
+        setCopiedText(label);
+        window.setTimeout(() => setCopiedText(null), 2000);
+      })
+      .catch(() => undefined);
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // Simulate contact form submission
+    const subject = `Portfolio enquiry from ${formData.name}`;
+    const body = `Name: ${formData.name}\nEmail: ${formData.email}\n\n${formData.message}`;
+    window.location.href = `mailto:${emailVal}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
     setIsSubmitted(true);
-    setFormData({ name: '', email: '', message: '' });
-    setTimeout(() => setIsSubmitted(false), 5000);
   };
 
   return (
@@ -107,34 +110,28 @@ export default function Contact() {
               </div>
             </div>
 
-            {/* Social Media Link Placeholders */}
+            {/* Social Media Links */}
             <div className="text-left space-y-3 pt-4 border-t border-zinc-150">
               <span className="block text-xs font-bold text-zinc-400 uppercase tracking-wider">Social Channels</span>
               <div className="flex space-x-3">
-                <div className="relative group">
-                  <button
-                    disabled
-                    className="p-3 bg-zinc-50 border border-zinc-200 rounded-xl text-zinc-400 cursor-not-allowed transition-all"
-                    aria-label="GitHub link coming soon"
-                  >
+                <a
+                  href="https://github.com/no-pax-alt/panchami"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="p-3 bg-zinc-50 border border-zinc-200 rounded-xl text-zinc-500 hover:text-zinc-900 hover:border-zinc-300 transition-all"
+                  aria-label="Open Panchami V C GitHub repository"
+                >
                     <Github className="h-5 w-5" />
-                  </button>
-                  <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 scale-0 rounded-lg bg-zinc-900 px-2 py-1 text-3xs font-semibold text-white transition-all group-hover:scale-100 whitespace-nowrap">
-                    GitHub Coming Soon
-                  </span>
-                </div>
-                <div className="relative group">
-                  <button
-                    disabled
-                    className="p-3 bg-zinc-50 border border-zinc-200 rounded-xl text-zinc-400 cursor-not-allowed transition-all"
-                    aria-label="LinkedIn link coming soon"
-                  >
-                    <Linkedin className="h-5 w-5" />
-                  </button>
-                  <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 scale-0 rounded-lg bg-zinc-900 px-2 py-1 text-3xs font-semibold text-white transition-all group-hover:scale-100 whitespace-nowrap">
-                    LinkedIn Coming Soon
-                  </span>
-                </div>
+                </a>
+                <a
+                  href="https://www.linkedin.com/in/panchami-v-c-a3a7333ba/"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="p-3 bg-zinc-50 border border-zinc-200 rounded-xl text-zinc-500 hover:text-zinc-900 hover:border-zinc-300 transition-all"
+                  aria-label="Open Panchami V C LinkedIn profile"
+                >
+                  <Linkedin className="h-5 w-5" />
+                </a>
               </div>
             </div>
           </div>
@@ -149,9 +146,9 @@ export default function Contact() {
                   <span className="inline-flex items-center justify-center p-2 bg-emerald-100 text-emerald-800 rounded-full mb-2">
                     <Check className="h-6 w-6" />
                   </span>
-                  <h4 className="text-base font-bold text-emerald-950">Message Sent Successfully!</h4>
+                  <h4 className="text-base font-bold text-emerald-950">Email Draft Opened</h4>
                   <p className="text-xs text-emerald-850">
-                    Thank you. The mock form demo submission has been captured.
+                    Your default email application should now contain the message details.
                   </p>
                 </div>
               ) : (

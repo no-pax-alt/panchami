@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { ExternalLink, Github, Smartphone, Lightbulb, Grid, X, Info } from 'lucide-react';
+import { Github, Smartphone, Lightbulb, Grid, X, Info, Cpu, ExternalLink } from 'lucide-react';
+import { motion } from 'framer-motion';
 
 interface Project {
   id: string;
@@ -9,6 +10,7 @@ interface Project {
   tagline: string;
   description: string;
   details: string[];
+  githubUrl?: string;
   icon: React.ReactNode;
   svgBg: React.ReactNode;
 }
@@ -78,6 +80,7 @@ export default function Projects() {
         'Features: Shape drawing (circles, rectangles), clear, and canvas refreshing',
         'Core Principles: Computer Graphics rendering math and memory buffers',
       ],
+      githubUrl: 'https://github.com/no-pax-alt/2D-Graphics-editor-C',
       icon: <Grid className="h-6 w-6 text-brand" />,
       svgBg: (
         <svg className="w-full h-full text-[#f5ebe6]" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -88,6 +91,34 @@ export default function Projects() {
           <line x1="40" y1="40" x2="160" y2="160" stroke="#f5ebe6" strokeWidth="1.5" />
           <circle cx="100" cy="90" r="4" fill="#c69c6d" />
           <circle cx="140" cy="130" r="4" fill="#c69c6d" />
+        </svg>
+      ),
+    },
+    {
+      id: 'recoveriq',
+      title: 'RECOVERIQ',
+      type: 'AI Revenue Recovery Engine',
+      category: 'Artificial Intelligence',
+      tagline: 'An AI-powered revenue recovery decision engine.',
+      description: 'An AI-powered revenue recovery decision engine that analyzes failed payments, assesses risk, recommends safe recovery actions, and maintains an auditable decision trail.',
+      details: [
+        'Analyzes failed payment events and recovery context',
+        'Assesses risk before recommending a recovery action',
+        'Maintains an auditable decision trail for each recommendation',
+      ],
+      githubUrl: 'https://github.com/no-pax-alt/RECOVERIQ',
+      icon: <Cpu className="h-6 w-6 text-teal-600" />,
+      svgBg: (
+        <svg className="w-full h-full text-[#f5ebe6]" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect width="200" height="200" fill="currentColor" fillOpacity="0.4" />
+          <rect x="45" y="55" width="110" height="90" rx="8" stroke="#6f4e37" strokeWidth="3" fill="white" />
+          <path d="M65 115 L82 98 L98 108 L122 78 L138 91" stroke="#c69c6d" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+          <circle cx="65" cy="115" r="4" fill="#6f4e37" />
+          <circle cx="82" cy="98" r="4" fill="#6f4e37" />
+          <circle cx="98" cy="108" r="4" fill="#6f4e37" />
+          <circle cx="122" cy="78" r="4" fill="#6f4e37" />
+          <circle cx="138" cy="91" r="4" fill="#6f4e37" />
+          <path d="M75 145 H125" stroke="#f5ebe6" strokeWidth="3" strokeLinecap="round" />
         </svg>
       ),
     },
@@ -130,10 +161,14 @@ export default function Projects() {
         </div>
 
         {/* Project Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {projects.map((proj) => (
-            <div
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          {projects.map((proj, idx) => (
+            <motion.div
               key={proj.id}
+              initial={{ opacity: 0, y: 18 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.2 }}
+              transition={{ duration: 0.45, delay: idx * 0.08, ease: 'easeOut' }}
               className="group flex flex-col h-full rounded-2xl border border-zinc-200 bg-white overflow-hidden shadow-2xs hover:shadow-lg transition-all duration-300 hover:-translate-y-1"
             >
               {/* SVG Graphic / Image Placeholder */}
@@ -162,25 +197,41 @@ export default function Projects() {
                 </div>
 
                 <div className="pt-6">
-                  <button
-                    onClick={() => setSelectedProject(proj)}
-                    className="w-full inline-flex items-center justify-center space-x-2 rounded-xl bg-zinc-900 px-4 py-2.5 text-sm font-semibold text-white shadow-2xs transition-all hover:bg-zinc-800 focus:outline-hidden focus:ring-2 focus:ring-zinc-950 focus:ring-offset-2"
-                    aria-label={`Open details for ${proj.title}`}
-                  >
-                    <Info className="h-4 w-4" />
-                    <span>View Project</span>
-                  </button>
+                  {proj.githubUrl ? (
+                    <a
+                      href={proj.githubUrl}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="w-full inline-flex items-center justify-center space-x-2 rounded-xl bg-zinc-900 px-4 py-2.5 text-sm font-semibold text-white shadow-2xs transition-all hover:bg-zinc-800 focus:outline-hidden focus:ring-2 focus:ring-zinc-950 focus:ring-offset-2"
+                      aria-label={`Open ${proj.title} on GitHub`}
+                    >
+                      <ExternalLink className="h-4 w-4" />
+                      <span>View Project</span>
+                    </a>
+                  ) : (
+                    <button
+                      onClick={() => setSelectedProject(proj)}
+                      className="w-full inline-flex items-center justify-center space-x-2 rounded-xl bg-zinc-900 px-4 py-2.5 text-sm font-semibold text-white shadow-2xs transition-all hover:bg-zinc-800 focus:outline-hidden focus:ring-2 focus:ring-zinc-950 focus:ring-offset-2"
+                      aria-label={`Open details for ${proj.title}`}
+                    >
+                      <Info className="h-4 w-4" />
+                      <span>View Project</span>
+                    </button>
+                  )}
                 </div>
               </div>
-            </div>
+            </motion.div>
           ))}
         </div>
 
         {/* Modal Overlay */}
         {selectedProject && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-zinc-900/60 backdrop-blur-xs">
-            <div
+            <motion.div
               className="relative w-full max-w-lg rounded-2xl bg-white p-6 sm:p-8 shadow-2xl border border-zinc-100 animate-in fade-in zoom-in-95 duration-200"
+              initial={{ opacity: 0, scale: 0.96, y: 12 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              transition={{ duration: 0.2, ease: 'easeOut' }}
               role="dialog"
               aria-modal="true"
               aria-labelledby="modal-title"
@@ -234,29 +285,22 @@ export default function Projects() {
                   </div>
                 </div>
 
-                {/* Placeholders Actions */}
-                <div className="grid grid-cols-2 gap-4 pt-4 border-t border-zinc-150">
-                  <div className="relative group">
-                    <button
-                      disabled
-                      className="w-full inline-flex items-center justify-center space-x-2 rounded-xl border border-zinc-200 bg-zinc-50/50 px-4 py-2.5 text-xs font-semibold text-zinc-400 cursor-not-allowed"
+                {selectedProject.githubUrl && (
+                  <div className="pt-4 border-t border-zinc-150">
+                    <a
+                      href={selectedProject.githubUrl}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="w-full inline-flex items-center justify-center space-x-2 rounded-xl border border-zinc-200 bg-zinc-50/50 px-4 py-2.5 text-sm font-semibold text-zinc-700 transition-all hover:bg-zinc-100 hover:border-zinc-300"
                     >
                       <Github className="h-4 w-4" />
-                      <span>Code coming soon</span>
-                    </button>
+                      <span>View Source on GitHub</span>
+                    </a>
                   </div>
-                  <div className="relative group">
-                    <button
-                      disabled
-                      className="w-full inline-flex items-center justify-center space-x-2 rounded-xl border border-zinc-200 bg-zinc-50/50 px-4 py-2.5 text-xs font-semibold text-zinc-400 cursor-not-allowed"
-                    >
-                      <ExternalLink className="h-4 w-4" />
-                      <span>Demo coming soon</span>
-                    </button>
-                  </div>
-                </div>
+                )}
+
               </div>
-            </div>
+            </motion.div>
           </div>
         )}
 
