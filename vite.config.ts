@@ -4,6 +4,6 @@ import { defineConfig } from 'vite'
 
 // https://vite.dev/config/
 export default defineConfig({
-  base: '/panchami/',
+  base: process.env.GITHUB_ACTIONS ? '/panchami/' : '/',
   plugins: [react(), tailwindcss()],
 })
